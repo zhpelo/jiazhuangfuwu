@@ -69,9 +69,7 @@ $workerLoggedIn = is_worker_logged_in();
 
             <div class="mt-5 pt-4 border-t border-gray-100">
                 <p class="text-xs text-gray-400 leading-relaxed">
-                    默认测试账号：13800000000<br>
-                    默认测试密码：123456<br>
-                    建议在首次登录后立即修改密码。
+                    如果忘记密码请联系管理员帮您处理！建议在首次登录后立即修改密码。
                 </p>
             </div>
         </div>
