@@ -174,7 +174,7 @@ $customerId = (int) ($_GET['customer_id'] ?? 0);
             ? `<div class="grid grid-cols-3 gap-2">${images.map(img => `
                 <div class="relative overflow-hidden rounded-lg bg-gray-100 aspect-square group">
                     <img class="w-full h-full object-cover cursor-pointer previewable" src="${escapeHtml(img.thumbnail_path)}" data-src="${escapeHtml(img.image_path)}" data-title="施工图片" alt="施工图片" loading="lazy">
-                    <button class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/50 text-white text-xs leading-6 text-center opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity" type="button" data-action="delete-image" data-image-id="${img.id}">&times;</button>
+                    <button class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/50 text-white text-xs leading-6 text-center opacity-100 transition-opacity" type="button" data-action="delete-image" data-image-id="${img.id}">&times;</button>
                 </div>`).join('')}</div>`
             : '<div class="text-center py-8 text-sm text-gray-400">暂未上传施工图片</div>';
 
