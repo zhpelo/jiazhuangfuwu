@@ -14,7 +14,7 @@ $customerId = (int) ($_GET['customer_id'] ?? 0);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <title><?= e(APP_NAME) ?> - 客户详情</title>
+    <title><?= e(app_name()) ?> - 客户详情</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -41,7 +41,9 @@ $customerId = (int) ($_GET['customer_id'] ?? 0);
 <!-- Not logged in -->
 <section class="<?= $workerLoggedIn ? 'hidden' : '' ?>" id="authView">
     <div class="max-w-lg mx-auto px-4 pt-12 pb-8 text-center">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#07C160] text-white text-2xl font-bold mb-4 shadow-lg shadow-green-200">联</div>
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#07C160] text-white text-2xl font-bold mb-4 shadow-lg shadow-green-200">
+            <?= mb_substr(e(app_name()), 0, 1) ?>
+        </div>
         <h1 class="text-xl font-bold text-gray-900 mb-2">请先登录</h1>
         <p class="text-sm text-gray-500 mb-6">您需要登录施工员账号才能查看客户详情</p>
         <a href="worker.php" class="inline-block w-full max-w-xs h-12 rounded-lg bg-[#07C160] hover:bg-[#06AD56] text-white font-medium text-sm leading-[48px] transition-colors">前往登录</a>
@@ -53,7 +55,7 @@ $customerId = (int) ($_GET['customer_id'] ?? 0);
     <!-- Header -->
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#07C160] text-white text-sm font-bold">联</div>
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#07C160] text-white text-sm font-bold"><?= mb_substr(e(app_name()), 0, 1) ?></div>
             <div>
                 <h1 class="text-lg font-bold text-gray-900">客户详情</h1>
                 <p class="text-xs text-gray-400" id="detailGreeting">加载中...</p>
@@ -71,7 +73,7 @@ $customerId = (int) ($_GET['customer_id'] ?? 0);
 
     <!-- Footer -->
     <div class="mt-6 text-center text-xs text-gray-400 leading-relaxed">
-        <p class="font-medium text-gray-500"><?= e(APP_NAME) ?></p>
+        <p class="font-medium text-gray-500"><?= e(app_name()) ?></p>
         <p>施工数据仅对当前登录施工员可见</p>
     </div>
 </main>

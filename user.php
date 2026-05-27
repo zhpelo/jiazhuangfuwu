@@ -15,7 +15,7 @@ $images = $customer ? customer_images($customerId) : [];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <title><?= e(APP_NAME) ?><?= $customer ? ' - 施工进度' : '' ?></title>
+    <title><?= e(app_name()) ?><?= $customer ? ' - 施工进度' : '' ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -41,7 +41,9 @@ $images = $customer ? customer_images($customerId) : [];
 <main class="max-w-lg mx-auto px-4 pt-6 pb-8">
     <!-- Brand Header -->
     <div class="flex items-center gap-3 mb-5">
-        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#07C160] text-white text-sm font-bold">联</div>
+        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#07C160] text-white text-sm font-bold">
+            <?= mb_substr(e(app_name()), 0, 1) ?>
+        </div>
         <div>
             <h1 class="text-lg font-bold text-gray-900">施工进度</h1>
             <p class="text-xs text-gray-400">扫码即可查看施工图片与施工员信息</p>
@@ -139,9 +141,9 @@ $images = $customer ? customer_images($customerId) : [];
 
     <!-- Footer -->
     <div class="mt-6 text-center text-xs text-gray-400 leading-relaxed">
-        <p class="font-medium text-gray-500"><?= e(APP_NAME) ?></p>
+        <p class="font-medium text-gray-500"><?= e(app_name()) ?></p>
         <p>品质保障</p>
-        <p>客服电话：<a class="text-[#576B95]" href="tel:<?= e(SERVICE_PHONE) ?>"><?= e(SERVICE_PHONE) ?></a></p>
+        <p>客服电话：<a class="text-[#576B95]" href="tel:<?= e(service_phone()) ?>"><?= e(service_phone()) ?></a></p>
     </div>
 </main>
 

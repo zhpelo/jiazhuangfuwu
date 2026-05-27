@@ -2,6 +2,10 @@
 
 基于原生 PHP 8.4 + SQLite + 原生 JavaScript 的水电施工进度查询手机网页系统，适配微信内置浏览器使用场景。
 
+
+默认用户名：admin
+默认密码：admin123
+
 ## 功能概览
 
 - `admin.php`

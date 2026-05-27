@@ -76,6 +76,16 @@ try {
             delete_image($request);
             break;
 
+        case 'get_settings':
+            require_admin();
+            json_success('获取成功。', ['settings' => get_all_settings()]);
+            break;
+
+        case 'save_settings':
+            require_admin();
+            save_settings($request);
+            break;
+
         default:
             json_error('未知操作。');
     }
@@ -287,6 +297,23 @@ function delete_image(array $request): void
 
     json_success('图片已删除。', [
         'stats' => statistics_overview(),
+    ]);
+}
+
+function save_settings(array $request): void
+{
+    $appName = trim((string) ($request['app_name'] ?? ''));
+    $servicePhone = trim((string) ($request['service_phone'] ?? ''));
+
+    if ($appName !== '') {
+        save_setting('app_name', $appName);
+    }
+    if ($servicePhone !== '') {
+        save_setting('service_phone', $servicePhone);
+    }
+
+    json_success('系统设置已保存。', [
+        'settings' => get_all_settings(),
     ]);
 }
 

@@ -41,7 +41,7 @@ if ($searchPhone !== '') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <title><?= e(APP_NAME) ?> - 施工进度查询</title>
+    <title><?= e(app_name()) ?> - 施工进度查询</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -68,9 +68,9 @@ if ($searchPhone !== '') {
     <!-- Brand Header -->
     <div class="text-center mb-8">
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#07C160] text-white text-2xl font-bold mb-4 shadow-lg shadow-green-200">
-            联
+            <?= mb_substr(e(app_name()), 0, 1) ?>
         </div>
-        <h1 class="text-xl font-bold text-gray-900"><?= e(APP_NAME) ?></h1>
+        <h1 class="text-xl font-bold text-gray-900"><?= e(app_name()) ?></h1>
         <p class="text-sm text-gray-500 mt-2 leading-relaxed">输入手机号，即可查看施工进度图片与施工员信息</p>
     </div>
 
@@ -101,8 +101,8 @@ if ($searchPhone !== '') {
 
     <!-- Footer -->
     <div class="mt-8 text-center text-xs text-gray-400 leading-relaxed">
-        <p class="font-medium text-gray-500"><?= e(APP_NAME) ?></p>
-        <p>品质保障服务电话：<a class="text-[#576B95]" href="tel:<?= e(SERVICE_PHONE) ?>"><?= e(SERVICE_PHONE) ?></a></p>
+        <p class="font-medium text-gray-500"><?= e(app_name()) ?></p>
+        <p>品质保障服务电话：<a class="text-[#576B95]" href="tel:<?= e(service_phone()) ?>"><?= e(service_phone()) ?></a></p>
     </div>
 </main>
 </body>

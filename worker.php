@@ -13,7 +13,7 @@ $workerLoggedIn = is_worker_logged_in();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <title><?= e(APP_NAME) ?> - 施工员端</title>
+    <title><?= e(app_name()) ?> - 施工员端</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -45,8 +45,10 @@ $workerLoggedIn = is_worker_logged_in();
 <section class="<?= $workerLoggedIn ? 'hidden' : '' ?>" id="authView">
     <div class="max-w-lg mx-auto px-4 pt-12 pb-8">
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#07C160] text-white text-2xl font-bold mb-4 shadow-lg shadow-green-200">联</div>
-            <h1 class="text-xl font-bold text-gray-900"><?= e(APP_NAME) ?></h1>
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#07C160] text-white text-2xl font-bold mb-4 shadow-lg shadow-green-200">
+                <?= mb_substr(e(app_name()), 0, 1) ?>
+            </div>
+            <h1 class="text-xl font-bold text-gray-900"><?= e(app_name()) ?></h1>
             <p class="text-sm text-gray-500 mt-2">施工员登录</p>
         </div>
 
@@ -81,7 +83,9 @@ $workerLoggedIn = is_worker_logged_in();
     <!-- Header -->
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#07C160] text-white text-sm font-bold">联</div>
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#07C160] text-white text-sm font-bold">
+                <?= mb_substr(e(app_name()), 0, 1) ?>
+            </div>
             <div>
                 <h1 class="text-lg font-bold text-gray-900">施工员工作台</h1>
                 <p class="text-xs text-gray-400" id="workerGreeting">加载中...</p>
@@ -162,7 +166,7 @@ $workerLoggedIn = is_worker_logged_in();
 
     <!-- Footer -->
     <div class="mt-6 text-center text-xs text-gray-400 leading-relaxed">
-        <p class="font-medium text-gray-500"><?= e(APP_NAME) ?></p>
+        <p class="font-medium text-gray-500"><?= e(app_name()) ?></p>
         <p>施工数据仅对当前登录施工员可见</p>
     </div>
 </main>

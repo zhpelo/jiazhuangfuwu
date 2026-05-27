@@ -13,7 +13,7 @@ $adminLoggedIn = is_admin_logged_in();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <title><?= e(APP_NAME) ?> - 管理后台</title>
+    <title><?= e(app_name()) ?> - 管理后台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -46,8 +46,10 @@ $adminLoggedIn = is_admin_logged_in();
 <section class="<?= $adminLoggedIn ? 'hidden' : '' ?>" id="authView">
     <div class="max-w-lg mx-auto px-4 pt-12 pb-8">
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#07C160] text-white text-2xl font-bold mb-4 shadow-lg shadow-green-200">联</div>
-            <h1 class="text-xl font-bold text-gray-900"><?= e(APP_NAME) ?></h1>
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#07C160] text-white text-2xl font-bold mb-4 shadow-lg shadow-green-200">
+                <?= mb_substr(e(app_name()), 0, 1) ?>
+            </div>
+            <h1 class="text-xl font-bold text-gray-900"><?= e(app_name()) ?></h1>
             <p class="text-sm text-gray-500 mt-2">管理后台登录</p>
         </div>
 
@@ -65,9 +67,6 @@ $adminLoggedIn = is_admin_logged_in();
                 </div>
                 <button type="submit" class="w-full h-12 rounded-lg bg-[#07C160] hover:bg-[#06AD56] active:bg-[#059A4C] text-white font-medium text-base transition-colors">登录后台</button>
             </form>
-            <div class="mt-5 pt-4 border-t border-gray-100">
-                <p class="text-xs text-gray-400 leading-relaxed">默认用户名：admin<br>默认密码：admin123<br>请在正式部署后及时更换默认管理员密码。</p>
-            </div>
         </div>
     </div>
 </section>
@@ -77,7 +76,7 @@ $adminLoggedIn = is_admin_logged_in();
     <!-- Header -->
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#07C160] text-white text-sm font-bold">联</div>
+            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#07C160] text-white text-sm font-bold"><?= mb_substr(e(app_name()), 0, 1) ?></div>
             <div>
                 <h1 class="text-lg font-bold text-gray-900">管理后台</h1>
                 <p class="text-xs text-gray-400" id="adminGreeting">加载中...</p>
@@ -92,6 +91,7 @@ $adminLoggedIn = is_admin_logged_in();
         <button class="tab-button whitespace-nowrap flex-1 py-2.5 rounded-full text-sm font-medium text-gray-500 transition-colors" type="button" data-tab="customers">客户管理</button>
         <button class="tab-button whitespace-nowrap flex-1 py-2.5 rounded-full text-sm font-medium text-gray-500 transition-colors" type="button" data-tab="images">图片管理</button>
         <button class="tab-button whitespace-nowrap flex-1 py-2.5 rounded-full text-sm font-medium text-gray-500 transition-colors" type="button" data-tab="stats">统计概览</button>
+        <button class="tab-button whitespace-nowrap flex-1 py-2.5 rounded-full text-sm font-medium text-gray-500 transition-colors" type="button" data-tab="settings">系统设置</button>
     </div>
 
     <!-- Tab: Workers -->
@@ -153,9 +153,32 @@ $adminLoggedIn = is_admin_logged_in();
         </div>
     </section>
 
+    <!-- Tab: Settings -->
+    <section class="tab-panel hidden" id="tab-settings">
+        <div class="bg-white rounded-xl shadow-sm px-5 py-4">
+            <div class="mb-3">
+                <h2 class="text-base font-semibold text-gray-900">系统设置</h2>
+                <p class="text-xs text-gray-400 mt-0.5">修改应用名称与客服电话，保存后全局生效。</p>
+            </div>
+            <form class="space-y-4" id="settingsForm">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2" for="settingsAppName">应用名称</label>
+                    <input id="settingsAppName" name="app_name" type="text" placeholder="例如：联塑家装管" required
+                           class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2" for="settingsServicePhone">客服电话</label>
+                    <input id="settingsServicePhone" name="service_phone" type="text" placeholder="例如：400-123-4567" required
+                           class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                </div>
+                <button type="submit" class="w-full h-12 rounded-lg bg-[#07C160] hover:bg-[#06AD56] active:bg-[#059A4C] text-white font-medium text-sm transition-colors">保存设置</button>
+            </form>
+        </div>
+    </section>
+
     <!-- Footer -->
     <div class="mt-6 text-center text-xs text-gray-400 leading-relaxed">
-        <p class="font-medium text-gray-500"><?= e(APP_NAME) ?></p>
+        <p class="font-medium text-gray-500"><?= e(app_name()) ?></p>
         <p>管理后台</p>
     </div>
 </main>
@@ -423,7 +446,16 @@ $adminLoggedIn = is_admin_logged_in();
 
     async function bootstrap() {
         setLoading(true, '正在加载后台数据...');
-        try { updateState(await api('bootstrap')); showApp(); }
+        try {
+            updateState(await api('bootstrap'));
+            // 同时加载系统设置
+            const settingsData = await api('get_settings');
+            if (settingsData.settings) {
+                $('settingsAppName').value = settingsData.settings.app_name || '';
+                $('settingsServicePhone').value = settingsData.settings.service_phone || '';
+            }
+            showApp();
+        }
         catch (e) { showAuth(); showToast(e.message); }
         finally { setLoading(false); }
     }
@@ -573,6 +605,20 @@ $adminLoggedIn = is_admin_logged_in();
         previewTitle.textContent = prev.dataset.title||'图片预览';
         previewImage.src = prev.dataset.src||prev.getAttribute('src')||'';
         openModal(previewModal);
+    });
+
+    // Settings form
+    $('settingsForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setLoading(true, '正在保存设置...');
+        try {
+            await api('save_settings', {
+                app_name: $('settingsAppName').value.trim(),
+                service_phone: $('settingsServicePhone').value.trim()
+            });
+            showToast('系统设置已保存');
+        } catch (err) { showToast(err.message); }
+        finally { setLoading(false); }
     });
 
     if (initialLoggedIn) bootstrap();

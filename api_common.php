@@ -5,15 +5,59 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-const APP_NAME = '联塑家装管';
-const SERVICE_PHONE = '400-123-4567';
 const DB_FILE = __DIR__ . '/db.sqlite';
 const UPLOAD_ROOT = __DIR__ . '/uploads';
 const QRCODE_ROOT = UPLOAD_ROOT . '/qrcodes';
 const THUMB_ROOT = UPLOAD_ROOT . '/thumbnails';
-const MAX_IMAGE_SIZE = 5242880;
+const MAX_IMAGE_SIZE = 1024 * 1024 * 10; // 10MB
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+function app_name(): string
+{
+    return get_setting('app_name') ?: '联塑家装管';
+}
+
+function service_phone(): string
+{
+    return get_setting('service_phone') ?: '400-123-4567';
+}
+
+function get_setting(string $key): ?string
+{
+    static $cache = null;
+    if ($cache === null) {
+        $cache = [];
+        $db = db_connect();
+        $result = $db->query('SELECT key, value FROM settings');
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $cache[(string) $row['key']] = (string) $row['value'];
+        }
+        $result->finalize();
+    }
+    return $cache[$key] ?? null;
+}
+
+function save_setting(string $key, string $value): void
+{
+    $db = db_connect();
+    $stmt = $db->prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (:key, :value)');
+    $stmt->bindValue(':key', $key, SQLITE3_TEXT);
+    $stmt->bindValue(':value', $value, SQLITE3_TEXT);
+    $stmt->execute();
+}
+
+function get_all_settings(): array
+{
+    $db = db_connect();
+    $result = $db->query('SELECT key, value FROM settings ORDER BY key');
+    $settings = [];
+    while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+        $settings[(string) $row['key']] = (string) $row['value'];
+    }
+    $result->finalize();
+    return $settings;
+}
 
 function ensure_runtime_dirs(): void
 {
@@ -93,6 +137,11 @@ function initialize_schema(SQLite3 $db): void
 
         CREATE INDEX IF NOT EXISTS idx_images_customer_id
         ON construction_images(customer_id);
+
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL DEFAULT ''
+        );
         SQL
     );
 
