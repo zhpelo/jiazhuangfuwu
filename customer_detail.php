@@ -165,7 +165,7 @@ $customerId = (int) ($_GET['customer_id'] ?? 0);
         const images = Array.isArray(c.images) ? c.images : [];
 
         const qrBlock = c.qr_code
-            ? `<div class="mt-3"> <div class="flex flex-col items-center"><img class="w-36 h-auto object-contain rounded-xl border border-gray-200 bg-white cursor-pointer previewable" src="${escapeHtml(c.qr_code)}" data-src="${escapeHtml(c.qr_code)}" data-title="客户二维码" alt="客户二维码"></div>
+            ? `<div class="mt-3"> <div class="flex flex-col items-center"><img class="w-36 h-auto object-contain rounded-xl border border-gray-200 bg-white cursor-pointer previewable" src="${escapeHtml(c.qr_code)}?${Date.now()}" data-src="${escapeHtml(c.qr_code)}" data-title="客户二维码" alt="客户二维码"></div>
             <div class="text-xs text-gray-500 text-center p-2">长按二维码，分享给客户查看施工进度</div>
             <div class="flex gap-2 mt-2 justify-center"><button class="text-xs text-gray-500 bg-gray-100 rounded-lg px-3 py-1.5 hover:bg-gray-200 transition-colors" type="button" id="generateQrBtn">刷新二维码</button><a class="text-xs text-[#576B95] bg-blue-50 rounded-lg px-3 py-1.5 hover:bg-blue-100 transition-colors" href="${escapeHtml(c.user_url)}" target="_blank" rel="noopener">打开客户页</a></div></div>`
             : `<div class="mt-3 p-3 bg-orange-50 text-orange-600 text-xs rounded-lg">二维码尚未生成<button class="ml-2 text-[#576B95] underline" type="button" id="generateQrBtn">立即生成</button></div>`;

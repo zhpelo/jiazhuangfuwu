@@ -727,33 +727,6 @@ function http_get_binary(string $url): string|false
     return @file_get_contents($url, false, $context);
 }
 
-function find_chinese_font(): ?string
-{
-    $candidates = [
-        // macOS
-        '/System/Library/Fonts/PingFang.ttc',
-        '/System/Library/Fonts/STHeiti Medium.ttc',
-        '/System/Library/Fonts/STHeiti Light.ttc',
-        '/System/Library/Fonts/Hiragino Sans GB.ttc',
-        // Linux
-        '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',
-        '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc',
-        '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
-        '/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf',
-        // Windows (via WAMP/XAMPP)
-        'C:\Windows\Fonts\msyh.ttc',
-        'C:\Windows\Fonts\simhei.ttf',
-    ];
-
-    foreach ($candidates as $path) {
-        if (file_exists($path) && is_readable($path)) {
-            return $path;
-        }
-    }
-
-    return null;
-}
-
 function generate_qr_code(string $data, string $savePath): bool
 {
     $providers = [
@@ -827,7 +800,7 @@ function composite_qr_with_background(string $qrPath, string $outputPath): bool
 
     // Text below QR code
     $text = '长按识别二维码，查看施工进度';
-    $fontPath = find_chinese_font();
+    $fontPath = __DIR__ . '/assets/fonts/DingTalk-JinBuTi.ttf';
 
     if ($fontPath) {
         $fontSize = 22;
