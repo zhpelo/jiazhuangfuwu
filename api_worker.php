@@ -65,6 +65,11 @@ try {
             get_customer_detail($workerId, $request);
             break;
 
+        case 'update_customer':
+            $workerId = require_worker();
+            update_customer($workerId, $request);
+            break;
+
         case 'change_password':
             $workerId = require_worker();
             change_password($workerId, $request);
@@ -302,6 +307,42 @@ function get_customer_detail(int $workerId, array $request): void
     $customer['user_url'] = customer_user_url($customerId);
 
     json_success('获取成功。', ['customer' => $customer]);
+}
+
+function update_customer(int $workerId, array $request): void
+{
+    $customerId = (int) ($request['customer_id'] ?? 0);
+    if ($customerId <= 0) {
+        json_error('缺少客户编号。');
+    }
+
+    if (!worker_owns_customer($workerId, $customerId)) {
+        json_error('无权修改该客户。', 403);
+    }
+
+    $phone = trim((string) ($request['customer_phone'] ?? ''));
+    $address = trim((string) ($request['address'] ?? ''));
+
+    if ($phone === '' || $address === '') {
+        json_error('请填写客户手机号和施工地址。');
+    }
+
+    if (!preg_match('/^1\d{10}$/', $phone)) {
+        json_error('请输入有效的客户手机号。');
+    }
+
+    $db = db_connect();
+    $stmt = $db->prepare(
+        'UPDATE customers SET customer_phone = :customer_phone, address = :address WHERE id = :id'
+    );
+    $stmt->bindValue(':customer_phone', $phone, SQLITE3_TEXT);
+    $stmt->bindValue(':address', $address, SQLITE3_TEXT);
+    $stmt->bindValue(':id', $customerId, SQLITE3_INTEGER);
+    $stmt->execute();
+
+    json_success('客户信息已更新。', [
+        'customers' => worker_customer_list($workerId),
+    ]);
 }
 
 function change_password(int $workerId, array $request): void

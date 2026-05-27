@@ -161,7 +161,7 @@ $customerId = (int) ($_GET['customer_id'] ?? 0);
         const c = state.customer;
         if (!c) return;
 
-        detailGreeting.textContent = `客户：${escapeHtml(c.customer_phone)} - ${escapeHtml(c.address)}`;
+        detailGreeting.textContent = `${escapeHtml(c.customer_phone)}`;
         const images = Array.isArray(c.images) ? c.images : [];
 
         const qrBlock = c.qr_code
@@ -181,16 +181,24 @@ $customerId = (int) ($_GET['customer_id'] ?? 0);
                 <div class="px-5 py-4 border-b border-gray-100">
                     <div class="flex items-center justify-between">
                         <div><h2 class="text-base font-semibold text-gray-900">客户信息</h2><p class="text-xs text-gray-400 mt-0.5">创建时间：${escapeHtml(c.created_at)}</p></div>
-                        <span class="text-xs bg-green-50 text-[#07C160] px-2.5 py-1 rounded-full font-medium">${images.length} 张图片</span>
+                        <div class="flex items-center gap-2">
+                            
+                            <button class="text-xs text-[#576B95] bg-blue-50 rounded-lg px-2.5 py-1 hover:bg-blue-100 active:bg-blue-200 transition-colors" type="button" id="editCustomerBtn">编辑</button>
+                        </div>
                     </div>
                 </div>
                 <div class="divide-y divide-gray-50">
-                    <div class="flex justify-between items-center px-5 py-3.5"><span class="text-sm text-gray-500">客户手机号</span><span class="text-sm text-gray-900">${escapeHtml(c.customer_phone)}</span></div>
-                    <div class="flex justify-between items-center px-5 py-3.5"><span class="text-sm text-gray-500">施工地址</span><span class="text-sm text-gray-900 text-right max-w-[60%]">${escapeHtml(c.address)}</span></div>
+                    <div class="flex justify-between items-center px-5 py-3.5"><span class="text-sm text-gray-500 shrink-0">客户手机号</span><span class="text-sm text-gray-900 info-display" data-field="phone">${escapeHtml(c.customer_phone)}</span><input class="hidden text-sm text-gray-900 text-right w-full bg-gray-50 rounded-lg px-2 py-1 info-input" id="editPhone" type="tel" maxlength="11" value="${escapeHtml(c.customer_phone)}" placeholder="请输入手机号"></div>
+                    <div class="flex justify-between items-center px-5 py-3.5"><span class="text-sm text-gray-500 shrink-0">施工地址</span><span class="text-sm text-gray-900 text-right max-w-[60%] info-display" data-field="address">${escapeHtml(c.address)}</span><input class="hidden text-sm text-gray-900 text-right w-full bg-gray-50 rounded-lg px-2 py-1 info-input" id="editAddress" type="text" value="${escapeHtml(c.address)}" placeholder="请输入施工地址"></div>
+                </div>
+                <div class="hidden px-5 py-3 border-t border-gray-100 bg-gray-50/50" id="editActions">
+                    <div class="flex gap-2">
+                        <button class="flex-1 h-9 rounded-lg bg-[#07C160] hover:bg-[#06AD56] active:bg-[#059A4C] text-white text-sm font-medium transition-colors" type="button" id="saveCustomerBtn">保存</button>
+                        <button class="flex-1 h-9 rounded-lg bg-white border border-gray-200 hover:bg-gray-100 active:bg-gray-200 text-gray-600 text-sm transition-colors" type="button" id="cancelEditBtn">取消</button>
+                    </div>
                 </div>
                 <div class="px-5 py-4">${qrBlock}</div>
             </div>
-
             <div class="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100">
                     <div class="flex items-center justify-between">
@@ -207,6 +215,57 @@ $customerId = (int) ($_GET['customer_id'] ?? 0);
     }
 
     function bindEvents() {
+        // Edit customer info
+        const editBtn = document.getElementById('editCustomerBtn');
+        const saveBtn = document.getElementById('saveCustomerBtn');
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        const editActions = document.getElementById('editActions');
+        const editPhone = document.getElementById('editPhone');
+        const editAddress = document.getElementById('editAddress');
+
+        let editing = false;
+
+        function enterEditMode() {
+            editing = true;
+            if (editBtn) editBtn.classList.add('hidden');
+            if (editActions) editActions.classList.remove('hidden');
+            detailContent.querySelectorAll('.info-display').forEach(el => el.classList.add('hidden'));
+            detailContent.querySelectorAll('.info-input').forEach(el => el.classList.remove('hidden'));
+            if (editPhone) editPhone.focus();
+        }
+
+        function exitEditMode() {
+            editing = false;
+            if (editBtn) editBtn.classList.remove('hidden');
+            if (editActions) editActions.classList.add('hidden');
+            detailContent.querySelectorAll('.info-display').forEach(el => el.classList.remove('hidden'));
+            detailContent.querySelectorAll('.info-input').forEach(el => el.classList.add('hidden'));
+        }
+
+        if (editBtn) editBtn.addEventListener('click', enterEditMode);
+        if (cancelBtn) cancelBtn.addEventListener('click', exitEditMode);
+
+        if (saveBtn) {
+            saveBtn.addEventListener('click', async () => {
+                if (!editing) return;
+                const phone = (editPhone?.value ?? '').trim();
+                const address = (editAddress?.value ?? '').trim();
+                if (!phone || !address) { showToast('请填写手机号和施工地址。'); return; }
+                if (!/^1\d{10}$/.test(phone)) { showToast('请输入有效的 11 位手机号。'); return; }
+
+                setLoading(true, '正在保存...');
+                try {
+                    const data = await api('update_customer', { customer_id: customerId, customer_phone: phone, address });
+                    if (data.customers) {
+                        const updated = data.customers.find(c => String(c.id) === String(customerId));
+                        if (updated) { state.customer = updated; renderDetail(); }
+                    }
+                    showToast('客户信息已更新');
+                } catch (err) { showToast(err.message); }
+                finally { setLoading(false); }
+            });
+        }
+
         // QR generate
         const qrBtn = document.getElementById('generateQrBtn');
         if (qrBtn) {

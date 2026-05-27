@@ -285,7 +285,7 @@ $workerLoggedIn = is_worker_logged_in();
 
     function fillWorkerProfile() {
         if (!state.worker) return;
-        workerGreeting.textContent = `${state.worker.name}，可在此维护客户资料与施工图片`;
+        workerGreeting.textContent = `你好！${state.worker.name}`;
         profileName.value = state.worker.name || '';
         profilePhone.value = state.worker.phone || '';
         profileShowPhone.checked = String(state.worker.show_phone) === '1';
