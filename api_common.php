@@ -727,6 +727,33 @@ function http_get_binary(string $url): string|false
     return @file_get_contents($url, false, $context);
 }
 
+function find_chinese_font(): ?string
+{
+    $candidates = [
+        // macOS
+        '/System/Library/Fonts/PingFang.ttc',
+        '/System/Library/Fonts/STHeiti Medium.ttc',
+        '/System/Library/Fonts/STHeiti Light.ttc',
+        '/System/Library/Fonts/Hiragino Sans GB.ttc',
+        // Linux
+        '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',
+        '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc',
+        '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
+        '/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf',
+        // Windows (via WAMP/XAMPP)
+        'C:\Windows\Fonts\msyh.ttc',
+        'C:\Windows\Fonts\simhei.ttf',
+    ];
+
+    foreach ($candidates as $path) {
+        if (file_exists($path) && is_readable($path)) {
+            return $path;
+        }
+    }
+
+    return null;
+}
+
 function generate_qr_code(string $data, string $savePath): bool
 {
     $providers = [
@@ -757,6 +784,76 @@ function generate_qr_code(string $data, string $savePath): bool
     return false;
 }
 
+function composite_qr_with_background(string $qrPath, string $outputPath): bool
+{
+    if (!extension_loaded('gd')) {
+        return false;
+    }
+
+    $qrImage = @imagecreatefrompng($qrPath);
+    if (!$qrImage) {
+        return false;
+    }
+
+    $qrWidth = imagesx($qrImage);
+    $qrHeight = imagesy($qrImage);
+
+    // 3:4 ratio canvas
+    $bgWidth = 600;
+    $bgHeight = 800;
+
+    $bg = imagecreatetruecolor($bgWidth, $bgHeight);
+    imageantialias($bg, true);
+
+    // Green background #07C160
+    $green = imagecolorallocate($bg, 7, 193, 96);
+    imagefill($bg, 0, 0, $green);
+
+    // Place QR code centered, slightly above middle to leave room for text
+    $qrX = (int) (($bgWidth - $qrWidth) / 2);
+    $qrY = (int) (($bgHeight - $qrHeight) / 2) - 50;
+
+    // White padding behind QR code for contrast
+    $padding = 16;
+    $white = imagecolorallocate($bg, 255, 255, 255);
+    imagefilledrectangle(
+        $bg,
+        $qrX - $padding, $qrY - $padding,
+        $qrX + $qrWidth + $padding, $qrY + $qrHeight + $padding,
+        $white
+    );
+
+    imagecopy($bg, $qrImage, $qrX, $qrY, 0, 0, $qrWidth, $qrHeight);
+
+    // Text below QR code
+    $text = '长按识别二维码，查看施工进度';
+    $fontPath = find_chinese_font();
+
+    if ($fontPath) {
+        $fontSize = 22;
+        $textColor = imagecolorallocate($bg, 255, 255, 255);
+
+        $bbox = imagettfbbox($fontSize, 0, $fontPath, $text);
+        $textWidth = $bbox[2] - $bbox[0];
+        $textX = (int) (($bgWidth - $textWidth) / 2);
+        $textY = $qrY + $qrHeight + $padding + 100;
+
+        imagettftext($bg, $fontSize, 0, $textX, $textY, $textColor, $fontPath, $text);
+    }
+
+    $directory = dirname($outputPath);
+    if (!is_dir($directory)) {
+        mkdir($directory, 0775, true);
+    }
+
+    $result = imagepng($bg, $outputPath);
+
+    imagedestroy($qrImage);
+    imagedestroy($bg);
+
+    return $result;
+}
+
 function generate_customer_qr(int $customerId): ?string
 {
     $customer = get_customer_by_id($customerId);
@@ -768,8 +865,18 @@ function generate_customer_qr(int $customerId): ?string
     $absolutePath = public_path($relativePath);
     $targetUrl = customer_user_url($customerId);
 
-    if (!generate_qr_code($targetUrl, $absolutePath)) {
+    // Step 1: generate raw QR code to temp file
+    $rawPath = $absolutePath . '.raw.png';
+    if (!generate_qr_code($targetUrl, $rawPath)) {
         return null;
+    }
+
+    // Step 2: composite into 3:4 green background with text
+    if (!composite_qr_with_background($rawPath, $absolutePath)) {
+        // Fallback: use raw QR code
+        rename($rawPath, $absolutePath);
+    } else {
+        @unlink($rawPath);
     }
 
     $db = db_connect();
