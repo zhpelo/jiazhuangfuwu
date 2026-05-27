@@ -1,0 +1,4 @@
+db.sqlite
+uploads/customer_*/
+uploads/thumbnails/customer_*/
+uploads/qrcodes/customer_*.png
