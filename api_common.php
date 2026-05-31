@@ -20,7 +20,7 @@ function app_name(): string
 
 function service_phone(): string
 {
-    return get_setting('service_phone') ?: '400-123-4567';
+    return get_setting('service_phone') ?: '';
 }
 
 function get_setting(string $key): ?string

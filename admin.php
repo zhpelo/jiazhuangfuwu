@@ -170,8 +170,14 @@ $adminLoggedIn = is_admin_logged_in();
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2" for="settingsServicePhone">客服电话</label>
-                        <input id="settingsServicePhone" name="service_phone" type="text" placeholder="例如：400-123-4567" required
+                        <input id="settingsServicePhone" name="service_phone" type="text" placeholder="例如：400-123-4567" 
                                class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" for="settingsFooterText">底部信息</label>
+                        <input id="settingsFooterText" name="footer_text" type="text" placeholder="例如：品质保障"
+                               class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                        <p class="text-xs text-gray-400 mt-1">显示在用户端页面底部，留空则不显示。</p>
                     </div>
                     <button type="submit" class="w-full h-12 rounded-lg bg-[#07C160] hover:bg-[#06AD56] active:bg-[#059A4C] text-white font-medium text-sm transition-colors">保存设置</button>
                 </form>
@@ -503,6 +509,7 @@ $adminLoggedIn = is_admin_logged_in();
             if (settingsData.settings) {
                 $('settingsAppName').value = settingsData.settings.app_name || '';
                 $('settingsServicePhone').value = settingsData.settings.service_phone || '';
+                $('settingsFooterText').value = settingsData.settings.footer_text || '';
             }
             showApp();
         }
@@ -664,7 +671,8 @@ $adminLoggedIn = is_admin_logged_in();
         try {
             await api('save_settings', {
                 app_name: $('settingsAppName').value.trim(),
-                service_phone: $('settingsServicePhone').value.trim()
+                service_phone: $('settingsServicePhone').value.trim(),
+                footer_text: $('settingsFooterText').value.trim()
             });
             showToast('系统设置已保存');
         } catch (err) { showToast(err.message); }

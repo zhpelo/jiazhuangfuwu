@@ -142,8 +142,12 @@ $images = $customer ? customer_images($customerId) : [];
     <!-- Footer -->
     <div class="mt-6 text-center text-xs text-gray-400 leading-relaxed">
         <p class="font-medium text-gray-500"><?= e(app_name()) ?></p>
-        <p>品质保障</p>
+        <?php $ft = get_setting('footer_text'); if ($ft !== null && $ft !== ''): ?>
+        <p><?= e($ft) ?></p>
+        <?php endif; ?>
+        <?php if (service_phone()): ?>
         <p>客服电话：<a class="text-[#576B95]" href="tel:<?= e(service_phone()) ?>"><?= e(service_phone()) ?></a></p>
+        <?php endif; ?>
     </div>
 </main>
 

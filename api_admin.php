@@ -314,13 +314,14 @@ function save_settings(array $request): void
 {
     $appName = trim((string) ($request['app_name'] ?? ''));
     $servicePhone = trim((string) ($request['service_phone'] ?? ''));
+    $footerText = trim((string) ($request['footer_text'] ?? ''));
 
     if ($appName !== '') {
         save_setting('app_name', $appName);
     }
-    if ($servicePhone !== '') {
-        save_setting('service_phone', $servicePhone);
-    }
+    // 客服电话和底部信息允许为空
+    save_setting('service_phone', $servicePhone);
+    save_setting('footer_text', $footerText);
 
     json_success('系统设置已保存。', [
         'settings' => get_all_settings(),
