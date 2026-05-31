@@ -86,6 +86,16 @@ try {
             save_settings($request);
             break;
 
+        case 'change_password':
+            require_admin();
+            change_admin_password($request);
+            break;
+
+        case 'change_username':
+            require_admin();
+            change_admin_username($request);
+            break;
+
         default:
             json_error('未知操作。');
     }
@@ -314,6 +324,99 @@ function save_settings(array $request): void
 
     json_success('系统设置已保存。', [
         'settings' => get_all_settings(),
+    ]);
+}
+
+function change_admin_password(array $request): void
+{
+    $oldPassword = (string) ($request['old_password'] ?? '');
+    $newPassword = (string) ($request['new_password'] ?? '');
+    $confirmPassword = (string) ($request['confirm_password'] ?? '');
+
+    if ($oldPassword === '' || $newPassword === '' || $confirmPassword === '') {
+        json_error('请完整填写所有密码字段。');
+    }
+
+    if (mb_strlen($newPassword) < 6) {
+        json_error('新密码至少需要 6 位。');
+    }
+
+    if ($newPassword !== $confirmPassword) {
+        json_error('两次输入的新密码不一致。');
+    }
+
+    $db = db_connect();
+    $username = (string) ($_SESSION['admin_username'] ?? 'admin');
+
+    $stmt = $db->prepare('SELECT password_hash FROM admins WHERE username = :username LIMIT 1');
+    $stmt->bindValue(':username', $username, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $admin = $result->fetchArray(SQLITE3_ASSOC) ?: null;
+    $result->finalize();
+
+    if (!$admin || !password_verify($oldPassword, (string) $admin['password_hash'])) {
+        json_error('原密码不正确。', 401);
+    }
+
+    $stmt = $db->prepare('UPDATE admins SET password_hash = :password_hash WHERE username = :username');
+    $stmt->bindValue(':password_hash', password_hash($newPassword, PASSWORD_DEFAULT), SQLITE3_TEXT);
+    $stmt->bindValue(':username', $username, SQLITE3_TEXT);
+    $stmt->execute();
+
+    json_success('密码修改成功，下次登录时请使用新密码。');
+}
+
+function change_admin_username(array $request): void
+{
+    $newUsername = trim((string) ($request['new_username'] ?? ''));
+    $password = (string) ($request['password'] ?? '');
+
+    if ($newUsername === '' || $password === '') {
+        json_error('请完整填写新账号和密码。');
+    }
+
+    if (mb_strlen($newUsername) < 2) {
+        json_error('新账号至少需要 2 个字符。');
+    }
+
+    $db = db_connect();
+    $oldUsername = (string) ($_SESSION['admin_username'] ?? 'admin');
+
+    // 验证密码
+    $stmt = $db->prepare('SELECT password_hash FROM admins WHERE username = :username LIMIT 1');
+    $stmt->bindValue(':username', $oldUsername, SQLITE3_TEXT);
+    $result = $stmt->execute();
+    $admin = $result->fetchArray(SQLITE3_ASSOC) ?: null;
+    $result->finalize();
+
+    if (!$admin || !password_verify($password, (string) $admin['password_hash'])) {
+        json_error('密码不正确。', 401);
+    }
+
+    // 检查新账号是否已被占用
+    if ($newUsername !== $oldUsername) {
+        $stmt = $db->prepare('SELECT id FROM admins WHERE username = :username LIMIT 1');
+        $stmt->bindValue(':username', $newUsername, SQLITE3_TEXT);
+        $result = $stmt->execute();
+        $exists = $result->fetchArray(SQLITE3_ASSOC);
+        $result->finalize();
+
+        if ($exists) {
+            json_error('该账号已被使用，请更换其他账号。');
+        }
+    }
+
+    // 更新账号
+    $stmt = $db->prepare('UPDATE admins SET username = :new_username WHERE username = :old_username');
+    $stmt->bindValue(':new_username', $newUsername, SQLITE3_TEXT);
+    $stmt->bindValue(':old_username', $oldUsername, SQLITE3_TEXT);
+    $stmt->execute();
+
+    // 同步更新 session
+    $_SESSION['admin_username'] = $newUsername;
+
+    json_success('账号修改成功，当前已切换为新账号。', [
+        'username' => $newUsername,
     ]);
 }
 

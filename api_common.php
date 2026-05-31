@@ -799,7 +799,7 @@ function composite_qr_with_background(string $qrPath, string $outputPath): bool
     imagecopy($bg, $qrImage, $qrX, $qrY, 0, 0, $qrWidth, $qrHeight);
 
     // Text below QR code
-    $text = '长按识别二维码，查看施工进度';
+    $text = '长按识别二维码，查看电子质保卡';
     $fontPath = __DIR__ . '/assets/fonts/DingTalk-JinBuTi.ttf';
 
     if ($fontPath) {

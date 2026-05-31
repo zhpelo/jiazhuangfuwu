@@ -15,7 +15,7 @@ $images = $customer ? customer_images($customerId) : [];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <title><?= e(app_name()) ?><?= $customer ? ' - 施工进度' : '' ?></title>
+    <title><?= e(app_name()) ?><?= $customer ? ' - 电子质保卡' : '' ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -45,7 +45,7 @@ $images = $customer ? customer_images($customerId) : [];
             <?= mb_substr(e(app_name()), 0, 1) ?>
         </div>
         <div>
-            <h1 class="text-lg font-bold text-gray-900">施工进度</h1>
+            <h1 class="text-lg font-bold text-gray-900">电子质保卡</h1>
             <p class="text-xs text-gray-400">扫码即可查看施工图片与施工员信息</p>
         </div>
     </div>

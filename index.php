@@ -41,7 +41,7 @@ if ($searchPhone !== '') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <title><?= e(app_name()) ?> - 施工进度查询</title>
+    <title><?= e(app_name()) ?> - 电子质保卡查询</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -71,7 +71,7 @@ if ($searchPhone !== '') {
             <?= mb_substr(e(app_name()), 0, 1) ?>
         </div>
         <h1 class="text-xl font-bold text-gray-900"><?= e(app_name()) ?></h1>
-        <p class="text-sm text-gray-500 mt-2 leading-relaxed">输入手机号，即可查看施工进度图片与施工员信息</p>
+        <p class="text-sm text-gray-500 mt-2 leading-relaxed">输入手机号，即可查看电子质保卡图片与施工员信息</p>
     </div>
 
     <!-- Search Card -->
@@ -94,7 +94,7 @@ if ($searchPhone !== '') {
                 type="submit"
                 class="w-full h-12 rounded-lg bg-[#07C160] hover:bg-[#06AD56] active:bg-[#059A4C] text-white font-medium text-base transition-colors"
             >
-                查询施工进度
+                查询电子质保卡
             </button>
         </form>
     </div>

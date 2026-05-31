@@ -155,24 +155,74 @@ $adminLoggedIn = is_admin_logged_in();
 
     <!-- Tab: Settings -->
     <section class="tab-panel hidden" id="tab-settings">
-        <div class="bg-white rounded-xl shadow-sm px-5 py-4">
-            <div class="mb-3">
-                <h2 class="text-base font-semibold text-gray-900">系统设置</h2>
-                <p class="text-xs text-gray-400 mt-0.5">修改应用名称与客服电话，保存后全局生效。</p>
+        <div class="space-y-4">
+            <!-- System Settings -->
+            <div class="bg-white rounded-xl shadow-sm px-5 py-4">
+                <div class="mb-3">
+                    <h2 class="text-base font-semibold text-gray-900">系统设置</h2>
+                    <p class="text-xs text-gray-400 mt-0.5">修改应用名称与客服电话，保存后全局生效。</p>
+                </div>
+                <form class="space-y-4" id="settingsForm">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" for="settingsAppName">应用名称</label>
+                        <input id="settingsAppName" name="app_name" type="text" placeholder="例如：联塑家装管" required
+                               class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" for="settingsServicePhone">客服电话</label>
+                        <input id="settingsServicePhone" name="service_phone" type="text" placeholder="例如：400-123-4567" required
+                               class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                    </div>
+                    <button type="submit" class="w-full h-12 rounded-lg bg-[#07C160] hover:bg-[#06AD56] active:bg-[#059A4C] text-white font-medium text-sm transition-colors">保存设置</button>
+                </form>
             </div>
-            <form class="space-y-4" id="settingsForm">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2" for="settingsAppName">应用名称</label>
-                    <input id="settingsAppName" name="app_name" type="text" placeholder="例如：联塑家装管" required
-                           class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+
+            <!-- Change Username -->
+            <div class="bg-white rounded-xl shadow-sm px-5 py-4">
+                <div class="mb-3">
+                    <h2 class="text-base font-semibold text-gray-900">修改账号</h2>
+                    <p class="text-xs text-gray-400 mt-0.5">修改管理员登录账号，修改后即时生效。</p>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2" for="settingsServicePhone">客服电话</label>
-                    <input id="settingsServicePhone" name="service_phone" type="text" placeholder="例如：400-123-4567" required
-                           class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                <form class="space-y-4" id="usernameForm">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" for="newUsername">新账号</label>
+                        <input id="newUsername" type="text" placeholder="请输入新的管理员账号" required minlength="2"
+                               class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" for="usernamePassword">当前密码</label>
+                        <input id="usernamePassword" type="password" placeholder="请输入当前密码以确认身份" required
+                               class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                    </div>
+                    <button type="submit" class="w-full h-12 rounded-lg bg-[#07C160] hover:bg-[#06AD56] active:bg-[#059A4C] text-white font-medium text-sm transition-colors">修改账号</button>
+                </form>
+            </div>
+
+            <!-- Change Password -->
+            <div class="bg-white rounded-xl shadow-sm px-5 py-4">
+                <div class="mb-3">
+                    <h2 class="text-base font-semibold text-gray-900">修改密码</h2>
+                    <p class="text-xs text-gray-400 mt-0.5">修改管理员登录密码，下次登录生效。</p>
                 </div>
-                <button type="submit" class="w-full h-12 rounded-lg bg-[#07C160] hover:bg-[#06AD56] active:bg-[#059A4C] text-white font-medium text-sm transition-colors">保存设置</button>
-            </form>
+                <form class="space-y-4" id="passwordForm">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" for="oldPassword">原密码</label>
+                        <input id="oldPassword" type="password" placeholder="请输入当前密码" required
+                               class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" for="newPassword">新密码</label>
+                        <input id="newPassword" type="password" placeholder="至少 6 位新密码" required minlength="6"
+                               class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" for="confirmPassword">确认新密码</label>
+                        <input id="confirmPassword" type="password" placeholder="再次输入新密码" required minlength="6"
+                               class="w-full h-11 px-3 text-base text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:border-[#07C160] focus:bg-white transition-colors placeholder:text-gray-300">
+                    </div>
+                    <button type="submit" class="w-full h-12 rounded-lg bg-[#07C160] hover:bg-[#06AD56] active:bg-[#059A4C] text-white font-medium text-sm transition-colors">修改密码</button>
+                </form>
+            </div>
         </div>
     </section>
 
@@ -617,6 +667,59 @@ $adminLoggedIn = is_admin_logged_in();
                 service_phone: $('settingsServicePhone').value.trim()
             });
             showToast('系统设置已保存');
+        } catch (err) { showToast(err.message); }
+        finally { setLoading(false); }
+    });
+
+    // Username change form
+    $('usernameForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newUsername = $('newUsername').value.trim();
+
+        if (newUsername.length < 2) {
+            showToast('新账号至少需要 2 个字符。');
+            return;
+        }
+
+        setLoading(true, '正在修改账号...');
+        try {
+            const result = await api('change_username', {
+                new_username: newUsername,
+                password: $('usernamePassword').value
+            });
+            $('usernameForm').reset();
+            // 更新显示的用户名
+            adminGreeting.textContent = `${result.username || newUsername}，可统一管理施工员、客户与施工图片。`;
+            showToast('账号修改成功');
+        } catch (err) { showToast(err.message); }
+        finally { setLoading(false); }
+    });
+
+    // Password change form
+    $('passwordForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const oldPwd = $('oldPassword').value;
+        const newPwd = $('newPassword').value;
+        const confirmPwd = $('confirmPassword').value;
+
+        if (newPwd.length < 6) {
+            showToast('新密码至少需要 6 位。');
+            return;
+        }
+        if (newPwd !== confirmPwd) {
+            showToast('两次输入的新密码不一致。');
+            return;
+        }
+
+        setLoading(true, '正在修改密码...');
+        try {
+            await api('change_password', {
+                old_password: oldPwd,
+                new_password: newPwd,
+                confirm_password: confirmPwd
+            });
+            $('passwordForm').reset();
+            showToast('密码修改成功');
         } catch (err) { showToast(err.message); }
         finally { setLoading(false); }
     });
